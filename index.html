@@ -76,7 +76,7 @@
         @keyframes d4 { to { transform: translate(-35vw, 45vh) scale(1.3); } }
         @keyframes d5 { to { transform: translate(40vw, -30vh) scale(1.1); } }
 
-        /* ═══════════ SCREENS ═══════════ */
+        /* ═══════════ PLAY SCREEN ═══════════ */
         .screen {
             position: absolute; inset: 0; z-index: 10;
             display: flex; flex-direction: column;
@@ -84,265 +84,8 @@
             padding: 20px;
             padding-top: calc(20px + env(safe-area-inset-top, 0px));
             padding-bottom: calc(20px + env(safe-area-inset-bottom, 0px));
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
-        .screen.active { opacity: 1; pointer-events: auto; }
-
-        /* ═══════════ GLASS PANEL ═══════════ */
-        .glass {
-            background: rgba(255,255,255,0.06);
-            backdrop-filter: blur(22px) saturate(170%);
-            -webkit-backdrop-filter: blur(22px) saturate(170%);
-            border: 1px solid rgba(255,255,255,0.18);
-            border-radius: 24px;
-            position: relative; overflow: hidden;
-        }
-        .glass::before {
-            content: '';
-            position: absolute; inset: 0;
-            border-radius: inherit;
-            background: linear-gradient(155deg,
-                rgba(255,255,255,0.14) 0%,
-                rgba(255,255,255,0.03) 35%,
-                transparent 55%);
-            pointer-events: none; z-index: 1;
-        }
-        .glass::after {
-            content: '';
-            position: absolute; bottom: 0; left: 0; right: 0;
-            height: 50%; border-radius: inherit;
-            background: linear-gradient(to top, rgba(0,0,0,0.12), transparent);
-            pointer-events: none; z-index: 1;
         }
 
-        /* ═══════════ LIQUID GLASS BUTTON ═══════════ */
-
-        .liquid-btn {
-            position: relative;
-            width: 220px; height: 220px;
-            border-radius: 50%;
-            cursor: pointer;
-            touch-action: manipulation;
-            -webkit-tap-highlight-color: transparent;
-            outline: none;
-            z-index: 2;
-            transition: transform 0.35s var(--spring);
-        }
-        .liquid-btn:active { transform: scale(0.92); }
-
-        /* — Glass surface (the actual visible face) — */
-        .liquid-btn__surface {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            background:
-                radial-gradient(ellipse 70% 50% at 35% 20%,
-                    rgba(255,255,255,0.28) 0%, transparent 60%),
-                radial-gradient(ellipse 50% 40% at 65% 75%,
-                    rgba(255,255,255,0.08) 0%, transparent 50%),
-                rgba(255,255,255,0.06);
-            backdrop-filter: blur(28px) saturate(200%) brightness(1.08);
-            -webkit-backdrop-filter: blur(28px) saturate(200%) brightness(1.08);
-            border: 1.5px solid rgba(255,255,255,0.28);
-            box-shadow:
-                inset 0 2px 3px rgba(255,255,255,0.35),
-                inset 0 -3px 6px rgba(0,0,0,0.12),
-                0 10px 40px rgba(0,0,0,0.25),
-                0 0 0 1px rgba(255,255,255,0.05);
-            filter: url(#liquid);
-            overflow: hidden;
-            z-index: 2;
-        }
-
-        /* — Top specular highlight (sharp reflection) — */
-        .liquid-btn__surface::before {
-            content: '';
-            position: absolute;
-            top: 7%; left: 14%; right: 14%;
-            height: 32%;
-            border-radius: 50%;
-            background: linear-gradient(180deg,
-                rgba(255,255,255,0.55) 0%,
-                rgba(255,255,255,0.12) 50%,
-                transparent 100%);
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        /* — Bottom caustic reflection — */
-        .liquid-btn__surface::after {
-            content: '';
-            position: absolute;
-            bottom: 10%; left: 22%; right: 22%;
-            height: 22%;
-            border-radius: 50%;
-            background: radial-gradient(ellipse,
-                rgba(255,255,255,0.12) 0%, transparent 70%);
-            pointer-events: none;
-            z-index: 5;
-        }
-
-        /* — Moving caustic light streak — */
-        .liquid-btn__caustic {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            overflow: hidden;
-            pointer-events: none;
-            z-index: 4;
-        }
-        .liquid-btn__caustic::before {
-            content: '';
-            position: absolute;
-            top: -60%; left: -20%;
-            width: 55%; height: 220%;
-            background: linear-gradient(90deg,
-                transparent 0%,
-                rgba(255,255,255,0.06) 40%,
-                rgba(255,255,255,0.12) 50%,
-                rgba(255,255,255,0.06) 60%,
-                transparent 100%);
-            transform: rotate(20deg);
-            animation: causticSweep 5s ease-in-out infinite;
-        }
-        @keyframes causticSweep {
-            0%   { transform: rotate(20deg) translateX(-120%); }
-            100% { transform: rotate(20deg) translateX(320%); }
-        }
-
-        /* — Fresnel edge ring (inner glow at rim) — */
-        .liquid-btn__edge {
-            position: absolute; inset: 1px;
-            border-radius: 50%;
-            box-shadow:
-                inset 0 0 20px rgba(255,255,255,0.06),
-                inset 0 0 2px rgba(255,255,255,0.15);
-            pointer-events: none;
-            z-index: 3;
-        }
-
-        /* — Outer glow halo — */
-        .liquid-btn__halo {
-            position: absolute; inset: -20px;
-            border-radius: 50%;
-            background: radial-gradient(circle,
-                var(--accent-glow) 0%,
-                rgba(167,139,250,0.15) 40%,
-                transparent 65%);
-            opacity: 0.25;
-            transition: opacity 0.3s ease;
-            pointer-events: none;
-            z-index: 0;
-            animation: haloPulse 3s ease-in-out infinite;
-        }
-        @keyframes haloPulse {
-            0%, 100% { opacity: 0.2; transform: scale(1); }
-            50%      { opacity: 0.35; transform: scale(1.04); }
-        }
-        .liquid-btn:active .liquid-btn__halo {
-            opacity: 0.7;
-            animation: none;
-        }
-
-        /* — Tap flash (white burst on tap) — */
-        .liquid-btn__flash {
-            position: absolute; inset: 0;
-            border-radius: 50%;
-            background: radial-gradient(circle,
-                rgba(255,255,255,0.5) 0%,
-                rgba(255,255,255,0.1) 40%,
-                transparent 65%);
-            opacity: 0;
-            pointer-events: none;
-            z-index: 6;
-        }
-        .liquid-btn__flash.fire {
-            animation: flashBurst 0.3s ease-out forwards;
-        }
-        @keyframes flashBurst {
-            0%   { opacity: 0.9; transform: scale(0.7); }
-            100% { opacity: 0; transform: scale(1.1); }
-        }
-
-        /* — Ripple — */
-        .ripple {
-            position: absolute; border-radius: 50%;
-            background: rgba(255,255,255,0.25);
-            transform: scale(0);
-            animation: rippleOut 0.55s ease-out forwards;
-            pointer-events: none; z-index: 7;
-        }
-        @keyframes rippleOut {
-            to { transform: scale(3.5); opacity: 0; }
-        }
-
-        /* — Image inside glass surface — */
-        .liquid-btn__img {
-            position: absolute;
-            top: 8%; left: 8%;
-            width: 84%; height: 84%;
-            border-radius: 50%;
-            object-fit: cover;
-            object-position: center;
-            mix-blend-mode: screen;
-            pointer-events: none;
-            z-index: 4;
-            filter: brightness(1.15) contrast(1.05);
-            -webkit-user-drag: none;
-        }
-
-        /* ═══════════ START SCREEN ═══════════ */
-        .title {
-            font-size: 38px; font-weight: 800;
-            letter-spacing: -1px;
-            margin-bottom: 6px;
-            background: linear-gradient(135deg, #e0e7ff 0%, #c4b5fd 50%, #a78bfa 100%);
-            -webkit-background-clip: text; background-clip: text;
-            -webkit-text-fill-color: transparent;
-            z-index: 2; position: relative;
-        }
-        .subtitle {
-            font-size: 15px; opacity: 0.5;
-            margin-bottom: 32px; z-index: 2; position: relative;
-            font-weight: 500;
-        }
-
-        .start-best {
-            padding: 20px 28px; text-align: center;
-            margin-bottom: 32px; max-width: 260px; width: 100%;
-        }
-        .start-best__label {
-            font-size: 11px; text-transform: uppercase;
-            letter-spacing: 2px; opacity: 0.4;
-            margin-bottom: 6px; position: relative; z-index: 2;
-        }
-        .start-best__value {
-            font-size: 44px; font-weight: 800;
-            position: relative; z-index: 2;
-        }
-
-        .btn-start {
-            display: inline-flex; align-items: center; justify-content: center;
-            padding: 16px 48px;
-            background: rgba(255,255,255,0.08);
-            backdrop-filter: blur(18px) saturate(160%);
-            -webkit-backdrop-filter: blur(18px) saturate(160%);
-            border: 1px solid rgba(255,255,255,0.22);
-            border-radius: 50px;
-            color: #fff; font-size: 17px; font-weight: 700;
-            cursor: pointer; position: relative; overflow: hidden;
-            transition: transform 0.2s var(--spring);
-            outline: none; z-index: 2;
-        }
-        .btn-start::before {
-            content: '';
-            position: absolute; inset: 0; border-radius: inherit;
-            background: linear-gradient(160deg,
-                rgba(255,255,255,0.18) 0%, rgba(255,255,255,0.03) 40%, transparent 55%);
-            pointer-events: none; z-index: 1;
-        }
-        .btn-start:active { transform: scale(0.95); }
-
-        /* ═══════════ PLAY SCREEN ═══════════ */
         .play-score {
             font-size: 80px; font-weight: 900;
             line-height: 1; margin-bottom: 4px;
@@ -375,11 +118,153 @@
             align-items: center; justify-content: center;
         }
 
+        /* ═══════════ LIQUID GLASS BUTTON ═══════════ */
+
+        .liquid-btn {
+            position: relative;
+            width: 220px; height: 220px;
+            border-radius: 50%;
+            cursor: pointer;
+            touch-action: manipulation;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+            z-index: 2;
+            transition: transform 0.35s var(--spring);
+        }
+        .liquid-btn:active { transform: scale(0.92); }
+
+        /* — Glass surface — */
+        .liquid-btn__surface {
+            position: absolute; inset: 0;
+            border-radius: 50%;
+            background:
+                radial-gradient(ellipse 70% 50% at 35% 20%,
+                    rgba(255,255,255,0.15) 0%, transparent 60%),
+                rgba(255,255,255,0.04);
+            backdrop-filter: blur(12px) saturate(180%) brightness(1.05);
+            -webkit-backdrop-filter: blur(12px) saturate(180%) brightness(1.05);
+            border: 1.5px solid rgba(255,255,255,0.22);
+            box-shadow:
+                inset 0 2px 3px rgba(255,255,255,0.25),
+                inset 0 -3px 6px rgba(0,0,0,0.10),
+                0 10px 40px rgba(0,0,0,0.25),
+                0 0 0 1px rgba(255,255,255,0.05);
+            overflow: hidden;
+            z-index: 2;
+        }
+
+        /* — Top specular highlight (subtle, behind image) — */
+        .liquid-btn__surface::before {
+            content: '';
+            position: absolute;
+            top: 5%; left: 15%; right: 15%;
+            height: 28%;
+            border-radius: 50%;
+            background: linear-gradient(180deg,
+                rgba(255,255,255,0.35) 0%,
+                rgba(255,255,255,0.05) 60%,
+                transparent 100%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* — Bottom subtle reflection — */
+        .liquid-btn__surface::after {
+            content: '';
+            position: absolute;
+            bottom: 8%; left: 25%; right: 25%;
+            height: 18%;
+            border-radius: 50%;
+            background: radial-gradient(ellipse,
+                rgba(255,255,255,0.08) 0%, transparent 70%);
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        /* — Image (visible, no blend mode) — */
+        .liquid-btn__img {
+            position: absolute;
+            top: 5%; left: 5%;
+            width: 90%; height: 90%;
+            border-radius: 50%;
+            object-fit: cover;
+            object-position: center;
+            pointer-events: none;
+            z-index: 5;
+            filter: brightness(1.3) contrast(1.1);
+            -webkit-user-drag: none;
+        }
+
+        /* — Fresnel edge ring — */
+        .liquid-btn__edge {
+            position: absolute; inset: 1px;
+            border-radius: 50%;
+            box-shadow:
+                inset 0 0 15px rgba(255,255,255,0.04),
+                inset 0 0 1.5px rgba(255,255,255,0.12);
+            pointer-events: none;
+            z-index: 6;
+        }
+
+        /* — Outer glow halo — */
+        .liquid-btn__halo {
+            position: absolute; inset: -20px;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                var(--accent-glow) 0%,
+                rgba(167,139,250,0.15) 40%,
+                transparent 65%);
+            opacity: 0.25;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+            z-index: 0;
+            animation: haloPulse 3s ease-in-out infinite;
+        }
+        @keyframes haloPulse {
+            0%, 100% { opacity: 0.2; transform: scale(1); }
+            50%      { opacity: 0.35; transform: scale(1.04); }
+        }
+        .liquid-btn:active .liquid-btn__halo {
+            opacity: 0.7;
+            animation: none;
+        }
+
+        /* — Tap flash — */
+        .liquid-btn__flash {
+            position: absolute; inset: 0;
+            border-radius: 50%;
+            background: radial-gradient(circle,
+                rgba(255,255,255,0.45) 0%,
+                rgba(255,255,255,0.08) 40%,
+                transparent 65%);
+            opacity: 0;
+            pointer-events: none;
+            z-index: 8;
+        }
+        .liquid-btn__flash.fire {
+            animation: flashBurst 0.3s ease-out forwards;
+        }
+        @keyframes flashBurst {
+            0%   { opacity: 0.8; transform: scale(0.7); }
+            100% { opacity: 0; transform: scale(1.1); }
+        }
+
+        /* — Ripple — */
+        .ripple {
+            position: absolute; border-radius: 50%;
+            background: rgba(255,255,255,0.25);
+            transform: scale(0);
+            animation: rippleOut 0.55s ease-out forwards;
+            pointer-events: none; z-index: 9;
+        }
+        @keyframes rippleOut {
+            to { transform: scale(3.5); opacity: 0; }
+        }
+
         /* ═══════════ RESPONSIVE ═══════════ */
         @media (max-height: 650px) {
             .liquid-btn { width: 180px; height: 180px; }
             .play-score { font-size: 60px; }
-            .title { font-size: 30px; }
         }
         @media (max-height: 520px) {
             .liquid-btn { width: 140px; height: 140px; }
@@ -403,33 +288,8 @@
         <div class="orb orb--5"></div>
     </div>
 
-    <!-- ═══ SVG Filters ═══ -->
-    <svg width="0" height="0" style="position:absolute;">
-        <defs>
-            <filter id="liquid">
-                <feTurbulence type="fractalNoise" baseFrequency="0.018"
-                              numOctaves="3" seed="5" result="noise"/>
-                <feDisplacementMap in="SourceGraphic" in2="noise"
-                                   scale="5" xChannelSelector="R" yChannelSelector="G"/>
-            </filter>
-        </defs>
-    </svg>
-
-    <!-- ═══ Start Screen ═══ -->
-    <div id="scr-start" class="screen active">
-        <h1 class="title">Cosmos Tap</h1>
-        <p class="subtitle">Нажимай. Быстрее. Ещё.</p>
-
-        <div class="start-best glass">
-            <div class="start-best__label">Рекорд</div>
-            <div class="start-best__value" id="start-best">0</div>
-        </div>
-
-        <button class="btn-start" id="btn-go">Играть</button>
-    </div>
-
     <!-- ═══ Play Screen ═══ -->
-    <div id="scr-play" class="screen">
+    <div class="screen">
         <div class="play-score" id="score">0</div>
         <div class="play-label">нажатий</div>
 
@@ -437,8 +297,7 @@
             <div class="liquid-btn" id="tap">
                 <div class="liquid-btn__halo"></div>
                 <div class="liquid-btn__surface">
-                    <div class="liquid-btn__caustic"></div>
-                    <img class="liquid-btn__img" src="data:image/jpeg;base64,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" alt="tap"/>
+                    <img class="liquid-btn__img" src="data:image/jpeg;base64,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" alt="tap"/>
                 </div>
                 <div class="liquid-btn__edge"></div>
                 <div class="liquid-btn__flash" id="flash"></div>
@@ -458,14 +317,10 @@
         var tg = window.Telegram && window.Telegram.WebApp;
 
         /* DOM */
-        var scrStart   = document.getElementById('scr-start');
-        var scrPlay    = document.getElementById('scr-play');
-        var startBest  = document.getElementById('start-best');
-        var btnGo      = document.getElementById('btn-go');
-        var scoreEl    = document.getElementById('score');
-        var tapBtn     = document.getElementById('tap');
-        var flashEl    = document.getElementById('flash');
-        var playBest   = document.getElementById('play-best');
+        var scoreEl  = document.getElementById('score');
+        var tapBtn   = document.getElementById('tap');
+        var flashEl  = document.getElementById('flash');
+        var playBest = document.getElementById('play-best');
 
         /* State */
         var score = 0;
@@ -475,15 +330,8 @@
         function haptic(t) {
             if (!tg || !tg.HapticFeedback) return;
             try {
-                if (t === 'tap')   tg.HapticFeedback.impactOccurred('light');
-                if (t === 'win')   tg.HapticFeedback.notificationOccurred('success');
+                if (t === 'tap') tg.HapticFeedback.impactOccurred('light');
             } catch (_) {}
-        }
-
-        function show(name) {
-            scrStart.classList.remove('active');
-            scrPlay.classList.remove('active');
-            (name === 'start' ? scrStart : scrPlay).classList.add('active');
         }
 
         function save() {
@@ -501,20 +349,10 @@
             try { tg.lockOrientation(); } catch (_) {}
         }
 
-        startBest.textContent = best;
-
-        btnGo.addEventListener('pointerdown', function (e) {
-            e.preventDefault();
-            haptic('tap');
-            score = 0;
-            scoreEl.textContent = '0';
-            playBest.textContent = best;
-            show('play');
-        });
+        playBest.textContent = best;
 
         tapBtn.addEventListener('pointerdown', function (e) {
             e.preventDefault();
-            if (!scrPlay.classList.contains('active')) return;
 
             score++;
             scoreEl.textContent = score;
@@ -552,9 +390,7 @@
 
         /* Save on close */
         window.addEventListener('beforeunload', save);
-        if (tg) {
-            window.addEventListener('pagehide', save);
-        }
+        window.addEventListener('pagehide', save);
     })();
     </script>
 </body>
