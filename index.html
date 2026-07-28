@@ -12,12 +12,30 @@
     --spring:cubic-bezier(.34,1.56,.64,1);
     --nav-h:68px;--glass-bg:rgba(255,255,255,.06);
     --glass-border:rgba(255,255,255,.14);
+    --aura-color:transparent;--aura-opacity:0;
+    --shake-x:0px;--shake-y:0px;
 }
 html,body{height:100%;width:100%;overflow:hidden;overscroll-behavior:none;
     -webkit-user-select:none;user-select:none;touch-action:none;
     -webkit-tap-highlight-color:transparent}
 body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Roboto,sans-serif;
-    background:#050510;color:#fff;position:fixed;inset:0}
+    background:#050510;color:#fff;position:fixed;inset:0;
+    transform:translate(var(--shake-x),var(--shake-y))}
+
+/* Screen shake */
+body.shake{animation:screenShake .35s ease}
+@keyframes screenShake{
+    0%,100%{transform:translate(0,0)}
+    10%{transform:translate(-3px,-2px)}
+    20%{transform:translate(4px,1px)}
+    30%{transform:translate(-2px,3px)}
+    40%{transform:translate(3px,-3px)}
+    50%{transform:translate(-4px,2px)}
+    60%{transform:translate(2px,-1px)}
+    70%{transform:translate(-3px,3px)}
+    80%{transform:translate(4px,-2px)}
+    90%{transform:translate(-2px,1px)}
+}
 
 /* ═══ BACKGROUND ═══ */
 .bg{position:fixed;inset:0;z-index:0;overflow:hidden}
@@ -32,6 +50,19 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
 @keyframes d3{to{transform:translate(-25vw,-40vh) scale(.85)}}
 @keyframes d4{to{transform:translate(-35vw,45vh) scale(1.3)}}
 @keyframes d5{to{transform:translate(40vw,-30vh) scale(1.1)}}
+
+/* ═══ BOTTOM AURA (combo glow) ═══ */
+.aura{
+    position:fixed;bottom:0;left:-20%;right:-20%;height:45%;z-index:5;
+    background:radial-gradient(ellipse at 50% 100%,var(--aura-color) 0%,transparent 65%);
+    opacity:var(--aura-opacity);pointer-events:none;
+    transition:background-color .6s ease,opacity .5s ease;
+}
+.aura.pulse{animation:auraPulse 2s ease-in-out infinite}
+@keyframes auraPulse{
+    0%,100%{opacity:var(--aura-opacity)}
+    50%{opacity:calc(var(--aura-opacity) * 1.4)}
+}
 
 /* ═══ SCREENS ═══ */
 .screen{
@@ -59,7 +90,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
     pointer-events:none;z-index:1;
 }
 
-/* ═══ BOTTOM NAV — separate glass capsules ═══ */
+/* ═══ NAV — separate capsules ═══ */
 .nav{
     position:fixed;bottom:0;left:0;right:0;z-index:50;
     height:calc(var(--nav-h) + env(safe-area-inset-bottom,0px));
@@ -80,105 +111,78 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
     transition:color .2s,background .2s,border-color .2s;
     -webkit-tap-highlight-color:transparent;
 }
-.nav__btn.active{
-    color:var(--accent);
-    background:rgba(167,139,250,.1);
-    border-color:rgba(167,139,250,.2);
-}
+.nav__btn.active{color:var(--accent);background:rgba(167,139,250,.1);border-color:rgba(167,139,250,.2)}
 .nav__btn-icon{font-size:18px;line-height:1}
 
 /* ═══ HOME ═══ */
 .league-bar{
-    width:100%;max-width:300px;padding:8px 14px;margin-bottom:6px;
+    width:100%;max-width:300px;padding:8px 14px;margin-bottom:4px;
     border-radius:14px;z-index:2;position:relative;
     background:rgba(255,255,255,.04);
     backdrop-filter:blur(14px) saturate(130%);
     -webkit-backdrop-filter:blur(14px) saturate(130%);
     border:1px solid rgba(255,255,255,.08);
 }
-.league-bar__label{font-size:11px;font-weight:700;text-transform:uppercase;
-    letter-spacing:1.5px;opacity:.45;margin-bottom:5px}
+.league-bar__label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;opacity:.45;margin-bottom:4px}
 .league-bar__track{height:5px;border-radius:3px;background:rgba(255,255,255,.06);overflow:hidden}
-.league-bar__fill{height:100%;border-radius:3px;
-    background:linear-gradient(90deg,var(--accent),#c4b5fd);transition:width .5s ease}
+.league-bar__fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--accent),#c4b5fd);transition:width .5s ease}
 
-.home-coins{
-    font-size:60px;font-weight:900;line-height:1;
-    font-variant-numeric:tabular-nums;margin-top:2px;
-    z-index:2;position:relative;
-}
+.home-coins{font-size:60px;font-weight:900;line-height:1;font-variant-numeric:tabular-nums;margin-top:2px;z-index:2;position:relative;transition:transform .15s var(--spring)}
 .home-coins.pop{animation:popC .15s var(--spring)}
+.home-coins.auto-pulse{animation:autoPulse .3s ease}
 @keyframes popC{0%{transform:scale(1)}50%{transform:scale(1.08)}100%{transform:scale(1)}}
+@keyframes autoPulse{0%{transform:scale(1)}50%{transform:scale(1.02)}100%{transform:scale(1)}}
 
-.home-label{
-    font-size:22px;font-weight:700;opacity:.45;
-    z-index:2;position:relative;margin-top:2px;
-}
-.home-sub{
-    font-size:22px;font-weight:700;opacity:.35;
-    z-index:2;position:relative;margin-bottom:6px;
-}
+.home-label{font-size:24px;font-weight:700;opacity:.45;z-index:2;position:relative;margin-top:1px}
+.home-cps{font-size:24px;font-weight:700;opacity:.35;z-index:2;position:relative;margin-bottom:4px}
 
-.combo-indicator{
-    font-size:16px;font-weight:800;z-index:2;position:relative;
-    margin-bottom:4px;transition:color .2s;
-}
-.combo-indicator.hidden{opacity:0}
+/* Combo */
+.combo-section{text-align:center;z-index:2;position:relative;margin-bottom:2px;transition:opacity .3s}
+.combo-section.hidden{opacity:0;pointer-events:none}
+.combo-label{font-size:18px;font-weight:800;transition:color .3s}
+.combo-bar{width:120px;height:4px;border-radius:2px;background:rgba(255,255,255,.08);margin:4px auto 0;overflow:hidden}
+.combo-bar__fill{height:100%;border-radius:2px;background:var(--accent);transition:width .2s ease}
+.combo-series{font-size:10px;opacity:.3;margin-top:2px;font-weight:600}
 
 .home-spacer{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
-
-.home-bottom{display:flex;gap:16px;font-size:12px;opacity:.3;
-    z-index:2;position:relative;font-weight:500;margin-top:10px}
+.home-bottom{display:flex;gap:16px;font-size:11px;opacity:.3;z-index:2;position:relative;font-weight:500;margin-top:8px}
 .home-bottom span{font-weight:700;opacity:1;color:var(--accent)}
 
-/* ═══ TAP BUTTON (IMAGE via URL, NO base64) ═══ */
+/* ═══ TAP BUTTON (IMAGE ON CONTAINER, NO backdrop-filter ON GLASS) ═══ */
 .tap-btn{
     position:relative;width:210px;height:210px;
     border-radius:50%;cursor:pointer;
     touch-action:manipulation;-webkit-tap-highlight-color:transparent;
     outline:none;z-index:2;overflow:hidden;
+    background:url('sun.jpg') center/cover no-repeat;
     transition:transform .3s var(--spring);
 }
 .tap-btn:active{transform:scale(.92)}
 
-/* Image as background of the container itself */
-.tap-btn__img{
-    position:absolute;inset:0;border-radius:50%;z-index:1;
-    background:url('sun.jpg') center/cover no-repeat;
-    filter:brightness(1.15) contrast(1.05);
-    pointer-events:none;
-}
-/* Glass overlay ON TOP of image */
+/* Glass overlay — NO backdrop-filter, just transparent gradient */
 .tap-btn__glass{
     position:absolute;inset:0;border-radius:50%;z-index:2;
     background:
-        radial-gradient(ellipse 70% 50% at 35% 20%,rgba(255,255,255,.12) 0%,transparent 60%),
-        rgba(255,255,255,.03);
-    backdrop-filter:blur(6px) saturate(130%);
-    -webkit-backdrop-filter:blur(6px) saturate(130%);
-    border:1.5px solid rgba(255,255,255,.15);
-    box-shadow:inset 0 2px 2px rgba(255,255,255,.15),
-               inset 0 -2px 4px rgba(0,0,0,.06),
+        radial-gradient(ellipse 70% 50% at 35% 20%,rgba(255,255,255,.15) 0%,transparent 60%),
+        linear-gradient(180deg,rgba(255,255,255,.06) 0%,rgba(0,0,0,.08) 100%);
+    border:1.5px solid rgba(255,255,255,.18);
+    box-shadow:inset 0 2px 2px rgba(255,255,255,.2),
+               inset 0 -2px 4px rgba(0,0,0,.08),
                0 8px 30px rgba(0,0,0,.2);
     pointer-events:none;
 }
 .tap-btn__glass::before{
     content:'';position:absolute;top:5%;left:15%;right:15%;height:22%;
     border-radius:50%;
-    background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.03) 60%,transparent);
+    background:linear-gradient(180deg,rgba(255,255,255,.35),rgba(255,255,255,.04) 60%,transparent);
     pointer-events:none;z-index:3;
 }
-.tap-btn__edge{
-    position:absolute;inset:1px;border-radius:50%;z-index:3;
-    box-shadow:inset 0 0 8px rgba(255,255,255,.02),inset 0 0 1px rgba(255,255,255,.08);
-    pointer-events:none;
-}
+.tap-btn__edge{position:absolute;inset:1px;border-radius:50%;z-index:3;
+    box-shadow:inset 0 0 8px rgba(255,255,255,.02),inset 0 0 1px rgba(255,255,255,.1);pointer-events:none}
 .tap-btn__halo{
     position:absolute;inset:-18px;border-radius:50%;z-index:0;
     background:radial-gradient(circle,var(--accent-glow),rgba(167,139,250,.1) 40%,transparent 65%);
-    opacity:.15;pointer-events:none;
-    animation:hPulse 3s ease-in-out infinite;
-    transition:opacity .3s;
+    opacity:.15;pointer-events:none;animation:hPulse 3s ease-in-out infinite;transition:opacity .3s;
 }
 @keyframes hPulse{0%,100%{opacity:.12;transform:scale(1)}50%{opacity:.22;transform:scale(1.03)}}
 .tap-btn:active .tap-btn__halo{opacity:.5;animation:none}
@@ -193,39 +197,30 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
 @keyframes flashB{0%{opacity:.6;transform:scale(.7)}100%{opacity:0;transform:scale(1.1)}}
 
 /* Floating +N */
-.float-num{
-    position:absolute;font-size:24px;font-weight:800;
-    color:rgba(255,255,255,.85);
-    text-shadow:0 1px 8px rgba(167,139,250,.5);
-    pointer-events:none;z-index:20;
-    animation:floatUp .7s ease-out forwards;
-}
-@keyframes floatUp{
-    0%{opacity:1;transform:translateY(0) scale(1)}
-    100%{opacity:0;transform:translateY(-90px) scale(.4)}
-}
+.float-num{position:absolute;font-size:24px;font-weight:800;color:rgba(255,255,255,.85);
+    text-shadow:0 1px 8px rgba(167,139,250,.5);pointer-events:none;z-index:20;
+    animation:floatUp .7s ease-out forwards}
+@keyframes floatUp{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-90px) scale(.4)}}
 
 /* Particles */
-.particle{
-    position:absolute;width:6px;height:6px;border-radius:50%;
-    background:rgba(255,255,255,.6);pointer-events:none;z-index:7;
-    animation:particleFly .5s ease-out forwards;
-}
-@keyframes particleFly{
-    0%{opacity:1;transform:translate(0,0) scale(1)}
-    100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}
-}
+.particle{position:absolute;width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,.6);
+    pointer-events:none;z-index:7;animation:particleFly .5s ease-out forwards}
+@keyframes particleFly{0%{opacity:1;transform:translate(0,0) scale(1)}100%{opacity:0;transform:translate(var(--dx),var(--dy)) scale(0)}}
 
 /* Ripple */
-.ripple{
-    position:absolute;border-radius:50%;background:rgba(255,255,255,.18);
-    transform:scale(0);animation:ripO .4s ease-out forwards;
-    pointer-events:none;z-index:6;
-}
+.ripple{position:absolute;border-radius:50%;background:rgba(255,255,255,.18);
+    transform:scale(0);animation:ripO .4s ease-out forwards;pointer-events:none;z-index:6}
 @keyframes ripO{to{transform:scale(3);opacity:0}}
 
-/* ═══ UPGRADES ═══ */
-.scr-title{font-size:22px;font-weight:800;margin:8px 0 14px;z-index:2;position:relative}
+/* ═══ SHOP ═══ */
+.scr-title{font-size:22px;font-weight:800;margin:8px 0 6px;z-index:2;position:relative}
+.shop-balance{
+    width:100%;max-width:320px;padding:14px 20px;margin-bottom:12px;
+    text-align:center;z-index:2;position:relative;
+}
+.shop-balance__label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;opacity:.4;margin-bottom:2px;position:relative;z-index:2}
+.shop-balance__value{font-size:28px;font-weight:900;position:relative;z-index:2;color:var(--accent)}
+
 .upg-card{padding:18px 20px;width:100%;max-width:320px;margin-bottom:10px;z-index:2;position:relative}
 .upg-card__row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;position:relative;z-index:2}
 .upg-card__name{font-size:15px;font-weight:700}
@@ -242,58 +237,84 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
 .upg-buy:disabled{opacity:.22;cursor:not-allowed;background:rgba(255,255,255,.03);border-color:rgba(255,255,255,.06)}
 
 /* ═══ PROFILE ═══ */
-.profile-card{padding:22px;width:100%;max-width:320px;z-index:2;position:relative}
+.profile-card{padding:22px;width:100%;max-width:320px;z-index:2;position:relative;margin-bottom:12px}
 .profile-card__title{font-size:17px;font-weight:800;margin-bottom:14px;position:relative;z-index:2}
-.profile-row{
-    display:flex;justify-content:space-between;align-items:center;
-    padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);position:relative;z-index:2;
-}
+.profile-row{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid rgba(255,255,255,.05);position:relative;z-index:2}
 .profile-row:last-child{border-bottom:none}
 .profile-row__label{font-size:12px;opacity:.45;font-weight:500}
 .profile-row__val{font-size:13px;font-weight:700;color:var(--accent)}
+.tier-btn{
+    width:100%;max-width:320px;padding:14px;border-radius:999px;
+    background:rgba(167,139,250,.08);border:1px solid rgba(167,139,250,.18);
+    color:var(--accent);font-size:14px;font-weight:700;
+    cursor:pointer;position:relative;z-index:2;
+    transition:transform .2s var(--spring);outline:none;
+}
+.tier-btn:active{transform:scale(.97)}
+
+/* ═══ TIER LIST MODAL ═══ */
+.tier-modal{
+    position:fixed;inset:0;z-index:100;
+    display:flex;align-items:center;justify-content:center;
+    opacity:0;pointer-events:none;transition:opacity .3s ease;
+}
+.tier-modal.active{opacity:1;pointer-events:auto}
+.tier-modal__bg{position:absolute;inset:0;background:rgba(0,0,0,.5)}
+.tier-modal__card{
+    position:relative;max-width:310px;width:90%;padding:24px 20px;
+    background:rgba(25,15,45,.85);
+    backdrop-filter:blur(26px) saturate(150%);
+    -webkit-backdrop-filter:blur(26px) saturate(150%);
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:22px;overflow:hidden;z-index:1;
+    max-height:80vh;overflow-y:auto;
+}
+.tier-modal__card::before{
+    content:'';position:absolute;inset:0;border-radius:inherit;
+    background:linear-gradient(155deg,rgba(255,255,255,.08),rgba(255,255,255,.02) 35%,transparent 55%);
+    pointer-events:none;z-index:1;
+}
+.tier-modal__title{font-size:18px;font-weight:800;margin-bottom:16px;position:relative;z-index:2;text-align:center}
+.tier-row{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 14px;border-radius:12px;margin-bottom:6px;
+    background:rgba(255,255,255,.04);
+    position:relative;z-index:2;
+    transition:background .2s;
+}
+.tier-row.current{background:rgba(167,139,250,.15);border:1px solid rgba(167,139,250,.25)}
+.tier-row__name{font-size:14px;font-weight:700}
+.tier-row__threshold{font-size:12px;opacity:.5;font-weight:600}
+.tier-row.current .tier-row__threshold{opacity:.8;color:var(--accent)}
+.tier-row__marker{font-size:10px;color:var(--accent);font-weight:700;margin-left:6px}
+.tier-modal__close{
+    display:block;width:100%;padding:12px;border-radius:999px;margin-top:12px;
+    background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
+    color:#fff;font-size:13px;font-weight:700;cursor:pointer;
+    position:relative;z-index:2;outline:none;
+}
+.tier-modal__close:active{transform:scale(.97)}
 
 /* ═══ SETTINGS ═══ */
 .set-card{padding:18px 20px;width:100%;max-width:320px;margin-bottom:10px;z-index:2;position:relative}
 .set-row{display:flex;justify-content:space-between;align-items:center;position:relative;z-index:2}
 .set-row__label{font-size:14px;font-weight:600}
-/* Toggle */
 .toggle{
     width:46px;height:26px;border-radius:13px;
     background:rgba(255,255,255,.1);border:none;
     cursor:pointer;position:relative;z-index:2;
     transition:background .25s;outline:none;
 }
-.toggle::after{
-    content:'';position:absolute;top:3px;left:3px;
-    width:20px;height:20px;border-radius:50%;background:#fff;
-    transition:transform .25s var(--spring);
-}
+.toggle::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:#fff;transition:transform .25s var(--spring)}
 .toggle.on{background:rgba(167,139,250,.45)}
 .toggle.on::after{transform:translateX(20px)}
-/* Slider section */
-.sliders-section{
-    width:100%;max-width:320px;margin-bottom:10px;
-    z-index:2;position:relative;
-    transition:opacity .3s,max-height .3s;
-    overflow:hidden;
-}
-.sliders-section.hidden{opacity:0;max-height:0;margin:0;padding:0;pointer-events:none}
-.slider-row{margin-bottom:14px;position:relative;z-index:2}
+.slider-row{margin-bottom:12px;position:relative;z-index:2}
 .slider-row:last-child{margin-bottom:0}
-.slider-row__label{font-size:12px;font-weight:600;opacity:.5;margin-bottom:6px}
+.slider-row__label{font-size:11px;font-weight:600;opacity:.45;margin-bottom:5px}
 .slider-row__wrap{display:flex;align-items:center;gap:10px}
-.slider-row input[type=range]{
-    flex:1;-webkit-appearance:none;appearance:none;
-    height:4px;border-radius:2px;
-    background:rgba(255,255,255,.12);outline:none;
-}
-.slider-row input[type=range]::-webkit-slider-thumb{
-    -webkit-appearance:none;width:22px;height:22px;border-radius:50%;
-    background:var(--accent);border:2px solid rgba(255,255,255,.3);
-    cursor:pointer;
-}
-.slider-row__val{font-size:12px;font-weight:700;width:36px;text-align:right;opacity:.6}
-/* Reset */
+.slider-row input[type=range]{flex:1;-webkit-appearance:none;appearance:none;height:4px;border-radius:2px;background:rgba(255,255,255,.12);outline:none}
+.slider-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--accent);border:2px solid rgba(255,255,255,.3);cursor:pointer}
+.slider-row__val{font-size:11px;font-weight:700;width:34px;text-align:right;opacity:.5}
 .set-reset{
     width:100%;padding:14px;border-radius:999px;
     background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);
@@ -304,8 +325,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
 .set-reset:active{transform:scale(.97)}
 
 /* ═══ MODAL ═══ */
-.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;
-    opacity:0;pointer-events:none;transition:opacity .3s ease}
+.modal{position:fixed;inset:0;z-index:100;display:flex;align-items:center;justify-content:center;opacity:0;pointer-events:none;transition:opacity .3s ease}
 .modal.active{opacity:1;pointer-events:auto}
 .modal__bg{position:absolute;inset:0;background:rgba(0,0,0,.5)}
 .modal__card{
@@ -316,20 +336,13 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
     border:1px solid rgba(255,255,255,.12);
     border-radius:22px;overflow:hidden;z-index:1;
 }
-.modal__card::before{
-    content:'';position:absolute;inset:0;border-radius:inherit;
+.modal__card::before{content:'';position:absolute;inset:0;border-radius:inherit;
     background:linear-gradient(155deg,rgba(255,255,255,.08),rgba(255,255,255,.02) 35%,transparent 55%);
-    pointer-events:none;z-index:1;
-}
+    pointer-events:none;z-index:1}
 .modal__icon{font-size:34px;margin-bottom:8px;position:relative;z-index:2}
 .modal__text{font-size:13px;font-weight:700;line-height:1.4;margin-bottom:18px;position:relative;z-index:2;color:#ef4444}
 .modal__actions{display:flex;gap:8px;position:relative;z-index:2}
-.modal__btn{
-    flex:1;padding:11px 6px;border-radius:999px;
-    font-size:12px;font-weight:700;cursor:pointer;
-    border:none;outline:none;
-    transition:transform .2s var(--spring),opacity .2s;
-}
+.modal__btn{flex:1;padding:11px 6px;border-radius:999px;font-size:12px;font-weight:700;cursor:pointer;border:none;outline:none;transition:transform .2s var(--spring),opacity .2s}
 .modal__btn:active:not(:disabled){transform:scale(.96)}
 .modal__btn--cancel{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);color:#fff}
 .modal__btn--confirm{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.2);color:#ef4444}
@@ -349,51 +362,47 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
 .league-notif.active{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
 .league-notif__title{font-size:11px;text-transform:uppercase;letter-spacing:2px;opacity:.35;margin-bottom:4px}
 .league-notif__name{font-size:22px;font-weight:800;color:var(--accent);margin-bottom:14px}
-.league-notif__btn{
-    padding:9px 28px;border-radius:999px;border:none;
+.league-notif__btn{padding:9px 28px;border-radius:999px;border:none;
     background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.12);
-    color:#fff;font-size:12px;font-weight:700;cursor:pointer;outline:none;
-}
+    color:#fff;font-size:12px;font-weight:700;cursor:pointer;outline:none}
 .league-notif__btn:active{transform:scale(.96)}
 
-/* League flash overlay */
-.league-flash{
-    position:fixed;inset:0;z-index:150;pointer-events:none;
-    opacity:0;transition:opacity .15s;
-}
-.league-flash.fire{
-    animation:lFlash .6s ease-out forwards;
-}
-@keyframes lFlash{
-    0%{opacity:.4;background:rgba(167,139,250,.3)}
-    100%{opacity:0;background:transparent}
-}
+/* League flash */
+.league-flash{position:fixed;inset:0;z-index:150;pointer-events:none;opacity:0}
+.league-flash.fire{animation:lFlash .6s ease-out forwards}
+@keyframes lFlash{0%{opacity:.35;background:rgba(167,139,250,.3)}100%{opacity:0;background:transparent}}
 
 /* Confetti */
-.confetti{
-    position:fixed;top:-10px;width:8px;height:8px;border-radius:2px;
-    pointer-events:none;z-index:160;
-    animation:confFall 1.8s ease-in forwards;
+.confetti{position:fixed;top:-10px;width:8px;height:8px;border-radius:2px;pointer-events:none;z-index:160;animation:confFall 1.8s ease-in forwards}
+@keyframes confFall{0%{opacity:1;transform:translateY(0) rotate(0deg)}100%{opacity:0;transform:translateY(110vh) rotate(720deg)}}
+
+/* Achievement notification */
+.ach-notif{
+    position:fixed;top:18%;left:50%;transform:translateX(-50%) translateY(-15px);
+    padding:14px 26px;border-radius:16px;text-align:center;
+    background:rgba(20,10,40,.8);
+    backdrop-filter:blur(22px) saturate(150%);
+    -webkit-backdrop-filter:blur(22px) saturate(150%);
+    border:1px solid rgba(251,191,36,.25);
+    z-index:180;opacity:0;pointer-events:none;
+    transition:opacity .3s ease,transform .3s var(--spring);
+    white-space:nowrap;
 }
-@keyframes confFall{
-    0%{opacity:1;transform:translateY(0) rotate(0deg)}
-    100%{opacity:0;transform:translateY(110vh) rotate(720deg)}
-}
+.ach-notif.active{opacity:1;pointer-events:auto;transform:translateX(-50%) translateY(0)}
+.ach-notif__text{font-size:15px;font-weight:800;color:#fbbf24}
 
 /* ═══ RESPONSIVE ═══ */
 @media(max-height:650px){
     .tap-btn{width:170px;height:170px}
     .home-coins{font-size:48px}
-    .home-label,.home-sub{font-size:18px}
+    .home-label,.home-cps{font-size:20px}
 }
 @media(max-height:520px){
     .tap-btn{width:140px;height:140px}
     .home-coins{font-size:38px}
-    .home-label,.home-sub{font-size:15px}
+    .home-label,.home-cps{font-size:16px}
 }
-@media(min-height:800px){
-    .tap-btn{width:240px;height:240px}
-}
+@media(min-height:800px){.tap-btn{width:240px;height:240px}}
 </style>
 </head>
 <body>
@@ -402,6 +411,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
     <div class="orb orb--1"></div><div class="orb orb--2"></div>
     <div class="orb orb--3"></div><div class="orb orb--4"></div><div class="orb orb--5"></div>
 </div>
+<div class="aura" id="aura"></div>
 
 <!-- ═══ HOME ═══ -->
 <div id="scr-home" class="screen active">
@@ -411,12 +421,15 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
     </div>
     <div class="home-coins" id="coins">0</div>
     <div class="home-label">монет</div>
-    <div class="home-sub" id="cps">+0 / сек</div>
-    <div class="combo-indicator hidden" id="combo"></div>
+    <div class="home-cps" id="cps">+0 / сек</div>
+    <div class="combo-section hidden" id="combo-section">
+        <div class="combo-label" id="combo-label">x1</div>
+        <div class="combo-bar"><div class="combo-bar__fill" id="combo-fill" style="width:0%"></div></div>
+        <div class="combo-series" id="combo-series">Серия: 0</div>
+    </div>
     <div class="home-spacer">
         <div class="tap-btn" id="tap">
             <div class="tap-btn__halo"></div>
-            <div class="tap-btn__img"></div>
             <div class="tap-btn__glass"></div>
             <div class="tap-btn__edge"></div>
             <div class="tap-btn__flash" id="flash"></div>
@@ -428,22 +441,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
     </div>
 </div>
 
-<!-- ═══ UPGRADES ═══ -->
-<div id="scr-upg" class="screen">
-    <div class="scr-title">Улучшения</div>
+<!-- ═══ SHOP ═══ -->
+<div id="scr-shop" class="screen">
+    <div class="scr-title">Магазин</div>
+    <div class="shop-balance glass">
+        <div class="shop-balance__label">Баланс</div>
+        <div class="shop-balance__value" id="shop-coins">🪙 0</div>
+    </div>
     <div class="upg-card glass">
-        <div class="upg-card__row">
-            <div class="upg-card__name">⚡ Авто-клик</div>
-            <div class="upg-card__lvl" id="auto-lvl">Ур. 0</div>
-        </div>
+        <div class="upg-card__row"><div class="upg-card__name">⚡ Авто-клик</div><div class="upg-card__lvl" id="auto-lvl">Ур. 0</div></div>
         <div class="upg-card__desc">+1 монета/сек за каждый уровень</div>
         <button class="upg-buy" id="auto-buy">Купить — 🪙 50</button>
     </div>
     <div class="upg-card glass">
-        <div class="upg-card__row">
-            <div class="upg-card__name">💪 Сила клика</div>
-            <div class="upg-card__lvl" id="power-lvl">Ур. 0</div>
-        </div>
+        <div class="upg-card__row"><div class="upg-card__name">💪 Сила клика</div><div class="upg-card__lvl" id="power-lvl">Ур. 0</div></div>
         <div class="upg-card__desc">+1 монета за каждый ручной клик</div>
         <button class="upg-buy" id="power-buy">Купить — 🪙 100</button>
     </div>
@@ -459,50 +470,29 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
         <div class="profile-row"><div class="profile-row__label">Время в игре</div><div class="profile-row__val" id="prof-time">0с</div></div>
         <div class="profile-row"><div class="profile-row__label">Доход/сек</div><div class="profile-row__val" id="prof-income">0</div></div>
     </div>
+    <button class="tier-btn" id="tier-btn">🏆 Тир-лист</button>
 </div>
 
 <!-- ═══ SETTINGS ═══ -->
 <div id="scr-set" class="screen">
     <div class="scr-title">Настройки</div>
-
     <div class="set-card glass">
-        <div class="set-row">
-            <div class="set-row__label">🔊 Звук клика</div>
-            <button class="toggle" id="snd1-toggle"></button>
-        </div>
-    </div>
-    <div class="set-card glass">
-        <div class="set-row">
-            <div class="set-row__label">🔊 Звук кнопки</div>
-            <button class="toggle" id="snd2-toggle"></button>
-        </div>
+        <div class="slider-row"><div class="slider-row__label">🔊 Громкость кнопок</div><div class="slider-row__wrap">
+            <input type="range" min="0" max="100" value="50" id="vol1-slider"><div class="slider-row__val" id="vol1-val">50%</div>
+        </div></div>
+        <div class="slider-row"><div class="slider-row__label">🔊 Громкость главной кнопки</div><div class="slider-row__wrap">
+            <input type="range" min="0" max="100" value="50" id="vol2-slider"><div class="slider-row__val" id="vol2-val">50%</div>
+        </div></div>
     </div>
     <div class="set-card glass">
-        <div class="set-row">
-            <div class="set-row__label">📳 Вибрация</div>
-            <button class="toggle on" id="hap-toggle"></button>
-        </div>
+        <div class="set-row"><div class="set-row__label">🎵 Звук комбо</div><button class="toggle on" id="combo-snd-toggle"></button></div>
+        <div class="slider-row" style="margin-top:12px"><div class="slider-row__label">Громкость комбо</div><div class="slider-row__wrap">
+            <input type="range" min="0" max="100" value="50" id="vol3-slider"><div class="slider-row__val" id="vol3-val">50%</div>
+        </div></div>
     </div>
-
-    <div class="sliders-section hidden" id="sliders">
-        <div class="set-card glass">
-            <div class="slider-row">
-                <div class="slider-row__label">Громкость клика</div>
-                <div class="slider-row__wrap">
-                    <input type="range" min="0" max="100" value="50" id="vol1-slider">
-                    <div class="slider-row__val" id="vol1-val">50%</div>
-                </div>
-            </div>
-            <div class="slider-row">
-                <div class="slider-row__label">Громкость кнопки</div>
-                <div class="slider-row__wrap">
-                    <input type="range" min="0" max="100" value="50" id="vol2-slider">
-                    <div class="slider-row__val" id="vol2-val">50%</div>
-                </div>
-            </div>
-        </div>
+    <div class="set-card glass">
+        <div class="set-row"><div class="set-row__label">📳 Вибрация</div><button class="toggle on" id="hap-toggle"></button></div>
     </div>
-
     <div class="set-card" style="background:none;border:none;backdrop-filter:none;-webkit-backdrop-filter:none">
         <button class="set-reset" id="reset-btn">Сбросить прогресс</button>
     </div>
@@ -521,6 +511,16 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
     </div>
 </div>
 
+<!-- ═══ TIER LIST MODAL ═══ -->
+<div class="tier-modal" id="tier-modal">
+    <div class="tier-modal__bg" id="tier-modal-bg"></div>
+    <div class="tier-modal__card">
+        <div class="tier-modal__title">🏆 Тир-лист</div>
+        <div id="tier-list"></div>
+        <button class="tier-modal__close" id="tier-close">Закрыть</button>
+    </div>
+</div>
+
 <!-- ═══ LEAGUE NOTIF ═══ -->
 <div class="league-notif" id="lg-notif">
     <div class="league-notif__title">Лига повышена!</div>
@@ -528,170 +528,249 @@ body{font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','Segoe UI',Ro
     <button class="league-notif__btn" id="lg-notif-close">OK</button>
 </div>
 <div class="league-flash" id="lg-flash"></div>
+<div class="ach-notif" id="ach-notif"><div class="ach-notif__text" id="ach-text"></div></div>
 
 <!-- ═══ NAV ═══ -->
 <div class="nav">
     <button class="nav__btn active" data-scr="scr-home"><span class="nav__btn-icon">🏠</span>Главная</button>
-    <button class="nav__btn" data-scr="scr-upg"><span class="nav__btn-icon">⚡</span>Улучшения</button>
+    <button class="nav__btn" data-scr="scr-shop"><span class="nav__btn-icon">🛒</span>Магазин</button>
     <button class="nav__btn" data-scr="scr-prof"><span class="nav__btn-icon">👤</span>Профиль</button>
     <button class="nav__btn" data-scr="scr-set"><span class="nav__btn-icon">⚙️</span>Настройки</button>
 </div>
 
-<!-- ══════════════════════════════════════════════
-     LOGIC
-     ══════════════════════════════════════════════ -->
 <script>
 (function(){
 'use strict';
 
-/* ─── Constants ─── */
+/* ═══ CONSTANTS ═══ */
 var K={COINS:'ct_c',CLICKS:'ct_k',EARNED:'ct_e',AUTO:'ct_a',POWER:'ct_p',
-    MAXCOINS:'ct_mc',SND1:'ct_s1',SND2:'ct_s2',V1:'ct_v1',V2:'ct_v2',
-    HAP:'ct_h',START:'ct_t'};
-var DEBOUNCE=50,AUTO_BASE=50,AUTO_M=1.1,PWR_BASE=100,PWR_M=1.15;
-var COMBO_TIMEOUT=500,COMBO_MAX=10;
-var LEAGUES=[{n:'Бронзовая',i:'🥉',min:0},{n:'Серебряная',i:'🥈',min:5000},{n:'Золотая',i:'🥇',min:50000}];
+    MAXC:'ct_mc',V1:'ct_v1',V2:'ct_v2',V3:'ct_v3',CSND:'ct_cs',HAP:'ct_h',START:'ct_t'};
+var DEBOUNCE=50,AUTO_B=50,AUTO_M=1.1,PWR_B=100,PWR_M=1.15;
+var COMBO_TIMEOUT=1000;
+var COMBO_TIERS=[
+    {t:0,m:1},{t:10,m:2},{t:20,m:3},{t:30,m:4},{t:50,m:5},
+    {t:70,m:6},{t:80,m:7},{t:90,m:8},{t:110,m:9},{t:150,m:10}
+];
+var COMBO_COLORS=['transparent','#22c55e','#06b6d4','#eab308','#f97316','#ef4444','#dc2626','#ec4899','#a855f7','#7c3aed'];
+var ACH_THRESHOLDS=[50,100,200];
+var LEAGUES=[
+    {n:'Бронзовая',i:'🥉',min:0},{n:'Серебряная',i:'🥈',min:5000},
+    {n:'Профессиональная',i:'🎖️',min:15000},{n:'Мастерская',i:'🏅',min:30000},
+    {n:'Мифическая',i:'🔮',min:50000},{n:'Легендарная',i:'⭐',min:75000},
+    {n:'Золотая',i:'🥇',min:100000}
+];
 
-/* ─── Telegram SDK ─── */
+/* ═══ TELEGRAM SDK ═══ */
 var tg=window.Telegram&&window.Telegram.WebApp;
 if(tg){tg.ready();tg.expand();try{tg.disableVerticalSwipes()}catch(_){}try{tg.lockOrientation()}catch(_){}}
 
-/* ─── Safe localStorage ─── */
+/* ═══ SAFE LOCALSTORAGE ═══ */
 function ld(k,d){try{var v=localStorage.getItem(k);if(v===null)return d;var n=parseFloat(v);return isNaN(n)?d:n}catch(_){return d}}
 
-/* ─── State ─── */
+/* ═══ STATE ═══ */
 var coins=ld(K.COINS,0),clicks=ld(K.CLICKS,0),earned=ld(K.EARNED,0);
 var autoLvl=Math.floor(ld(K.AUTO,0)),powerLvl=Math.floor(ld(K.POWER,0));
-var maxCoins=ld(K.MAXCOINS,0);
-var snd1On=localStorage.getItem(K.SND1)==='1',snd2On=localStorage.getItem(K.SND2)==='1';
-var vol1=ld(K.V1,50),vol2=ld(K.V2,50);
+var maxCoins=ld(K.MAXC,0);
+var vol1=ld(K.V1,50),vol2=ld(K.V2,50),vol3=ld(K.V3,50);
+var comboSndOn=localStorage.getItem(K.CSND)!=='0';
 var hapOn=localStorage.getItem(K.HAP)!=='0';
 var startTime=ld(K.START,Date.now());
 if(!localStorage.getItem(K.START))localStorage.setItem(K.START,String(startTime));
 
-var currentLeague=-1,lastTap=0,combo=0,comboTimer=null,countdownId=null;
+var curLeague=-1,lastTap=0,comboClicks=0,comboMult=1,comboTimer=null;
+var countdownId=null,lastAchShown=0,achTimeout=null;
 
-/* ─── Audio System (Web Audio API) ─── */
+/* ═══ AUDIO (Web Audio API) ═══ */
 var audioCtx=null;
-function getAC(){
-    if(!audioCtx){try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(_){return null}}
-    if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();
-    return audioCtx;
-}
-function playClick(){
-    if(!snd1On||vol1<=0)return;var ac=getAC();if(!ac)return;
-    try{
-        var o=ac.createOscillator(),g=ac.createGain(),v=vol1/100*.12;
-        o.connect(g);g.connect(ac.destination);
-        o.frequency.value=1200;o.type='sine';
-        g.gain.setValueAtTime(v,ac.currentTime);
-        g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.06);
-        o.start(ac.currentTime);o.stop(ac.currentTime+.06);
-    }catch(_){}}
-function playTap(){
-    if(!snd2On||vol2<=0)return;var ac=getAC();if(!ac)return;
-    try{
-        var v=vol2/100*.18,t=ac.currentTime;
-        /* Low sine body */
-        var o=ac.createOscillator(),g1=ac.createGain();
-        o.connect(g1);g1.connect(ac.destination);
-        o.frequency.setValueAtTime(320,t);
-        o.frequency.exponentialRampToValueAtTime(80,t+.12);
-        o.type='sine';
-        g1.gain.setValueAtTime(v,t);
-        g1.gain.exponentialRampToValueAtTime(.001,t+.12);
-        o.start(t);o.stop(t+.12);
-        /* Noise snap */
-        var len=Math.floor(ac.sampleRate*.025);
-        var buf=ac.createBuffer(1,len,ac.sampleRate);
-        var d=buf.getChannelData(0);
-        for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);
-        var ns=ac.createBufferSource();ns.buffer=buf;
-        var g2=ac.createGain();ns.connect(g2);g2.connect(ac.destination);
-        g2.gain.setValueAtTime(v*.6,t);
-        g2.gain.exponentialRampToValueAtTime(.001,t+.025);
-        ns.start(t);ns.stop(t+.025);
-    }catch(_){}}
+function getAC(){if(!audioCtx)try{audioCtx=new(window.AudioContext||window.webkitAudioContext)()}catch(_){return null}
+    if(audioCtx&&audioCtx.state==='suspended')audioCtx.resume();return audioCtx}
 
-/* ─── DOM ─── */
+function playClick(){
+    if(vol1<=0)return;var ac=getAC();if(!ac)return;
+    try{var o=ac.createOscillator(),g=ac.createGain(),v=vol1/100*.12;
+        o.connect(g);g.connect(ac.destination);o.frequency.value=1200;o.type='sine';
+        g.gain.setValueAtTime(v,ac.currentTime);g.gain.exponentialRampToValueAtTime(.001,ac.currentTime+.06);
+        o.start(ac.currentTime);o.stop(ac.currentTime+.06)}catch(_){}}
+
+function playTap(){
+    if(vol2<=0)return;var ac=getAC();if(!ac)return;
+    try{var v=vol2/100*.18,t=ac.currentTime;
+        var o=ac.createOscillator(),g1=ac.createGain();o.connect(g1);g1.connect(ac.destination);
+        o.frequency.setValueAtTime(320,t);o.frequency.exponentialRampToValueAtTime(80,t+.12);o.type='sine';
+        g1.gain.setValueAtTime(v,t);g1.gain.exponentialRampToValueAtTime(.001,t+.12);
+        o.start(t);o.stop(t+.12);
+        var len=Math.floor(ac.sampleRate*.025),buf=ac.createBuffer(1,len,ac.sampleRate),d=buf.getChannelData(0);
+        for(var i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,3);
+        var ns=ac.createBufferSource();ns.buffer=buf;var g2=ac.createGain();
+        ns.connect(g2);g2.connect(ac.destination);g2.gain.setValueAtTime(v*.6,t);
+        g2.gain.exponentialRampToValueAtTime(.001,t+.025);ns.start(t);ns.stop(t+.025)}catch(_){}}
+
+function playComboUp(mult){
+    if(!comboSndOn||vol3<=0)return;var ac=getAC();if(!ac)return;
+    try{var tier=mult-2;if(tier<0)return;var v=vol3/100*.18,t=ac.currentTime;
+        var freq=400*Math.pow(2,tier/6);
+        var o=ac.createOscillator(),g=ac.createGain();o.connect(g);g.connect(ac.destination);
+        o.frequency.value=freq;o.type='triangle';
+        g.gain.setValueAtTime(v,t);g.gain.exponentialRampToValueAtTime(.001,t+.2);
+        o.start(t);o.stop(t+.2);
+        var o2=ac.createOscillator(),g2=ac.createGain();o2.connect(g2);g2.connect(ac.destination);
+        o2.frequency.value=freq*1.5;o2.type='sine';
+        g2.gain.setValueAtTime(v*.4,t);g2.gain.exponentialRampToValueAtTime(.001,t+.15);
+        o2.start(t);o2.stop(t+.15)}catch(_){}}
+
+/* ═══ DOM ═══ */
 var $=function(id){return document.getElementById(id)};
-var coinsEl=$('coins'),cpsEl=$('cps'),comboEl=$('combo');
+var coinsEl=$('coins'),cpsEl=$('cps');
+var comboSec=$('combo-section'),comboLbl=$('combo-label'),comboFill=$('combo-fill'),comboSeries=$('combo-series');
 var lgLabel=$('lg-label'),lgFill=$('lg-fill');
 var statClicks=$('stat-clicks'),statPower=$('stat-power');
-var tapBtn=$('tap'),flashEl=$('flash');
+var tapBtn=$('tap'),flashEl=$('flash'),auraEl=$('aura');
+var shopCoins=$('shop-coins');
 var autoLvlEl=$('auto-lvl'),autoBuyEl=$('auto-buy');
 var powerLvlEl=$('power-lvl'),powerBuyEl=$('power-buy');
 var profClicks=$('prof-clicks'),profEarned=$('prof-earned');
 var profTime=$('prof-time'),profIncome=$('prof-income');
-var snd1Tog=$('snd1-toggle'),snd2Tog=$('snd2-toggle'),hapTog=$('hap-toggle');
-var vol1Sl=$('vol1-slider'),vol2Sl=$('vol2-slider');
-var vol1Val=$('vol1-val'),vol2Val=$('vol2-val');
-var slidersSec=$('sliders');
+var vol1Sl=$('vol1-slider'),vol2Sl=$('vol2-slider'),vol3Sl=$('vol3-slider');
+var vol1Val=$('vol1-val'),vol2Val=$('vol2-val'),vol3Val=$('vol3-val');
+var comboSndTog=$('combo-snd-toggle'),hapTog=$('hap-toggle');
 var resetBtn=$('reset-btn'),modal=$('modal');
 var mCancel=$('m-cancel'),mConfirm=$('m-confirm');
-var lgNotif=$('lg-notif'),lgNotifName=$('lg-notif-name');
-var lgNotifClose=$('lg-notif-close'),lgFlash=$('lg-flash');
+var tierBtn=$('tier-btn'),tierModal=$('tier-modal'),tierList=$('tier-list'),tierClose=$('tier-close');
+var lgNotif=$('lg-notif'),lgNotifName=$('lg-notif-name'),lgNotifClose=$('lg-notif-close'),lgFlash=$('lg-flash');
+var achNotif=$('ach-notif'),achText=$('ach-text');
 var navBtns=document.querySelectorAll('.nav__btn');
 var screens=document.querySelectorAll('.screen');
 
-/* ─── Helpers ─── */
-function hap(t){
-    if(!hapOn||!tg||!tg.HapticFeedback)return;
-    try{
-        if(t==='tap')tg.HapticFeedback.impactOccurred('light');
-        if(t==='heavy')tg.HapticFeedback.impactOccurred('heavy');
-        if(t==='ok')tg.HapticFeedback.notificationOccurred('success');
-        if(t==='err')tg.HapticFeedback.notificationOccurred('error');
-    }catch(_){}}
+/* ═══ HELPERS ═══ */
+function hap(t){if(!hapOn||!tg||!tg.HapticFeedback)return;try{
+    if(t==='tap')tg.HapticFeedback.impactOccurred('light');
+    if(t==='heavy')tg.HapticFeedback.impactOccurred('heavy');
+    if(t==='ok')tg.HapticFeedback.notificationOccurred('success');
+    if(t==='err')tg.HapticFeedback.notificationOccurred('error')}catch(_){}}
+
 function fmt(n){n=Math.floor(n);if(n<0)n=0;if(n>=1e6)return(n/1e6).toFixed(1)+'M';if(n>=1e4)return(n/1e3).toFixed(1)+'k';return n.toLocaleString('ru-RU')}
 function fmtTime(ms){var s=Math.floor(ms/1000),h=Math.floor(s/3600),m=Math.floor(s%3600/60),ss=s%60;if(h)return h+'ч '+m+'м';if(m)return m+'м '+ss+'с';return ss+'с'}
-function autoCost(){return Math.round(AUTO_BASE*Math.pow(AUTO_M,autoLvl))}
-function powerCost(){return Math.round(PWR_BASE*Math.pow(PWR_M,powerLvl))}
+function autoCost(){return Math.round(AUTO_B*Math.pow(AUTO_M,autoLvl))}
+function powerCost(){return Math.round(PWR_B*Math.pow(PWR_M,powerLvl))}
 function clickPower(){return 1+powerLvl}
 
-/* ─── Cached DOM update ─── */
+/* ═══ CACHED DOM UPDATE ═══ */
 var cache={};
 function st(el,v){var id=el.id||el;if(cache[id]===v)return;cache[id]=v;(typeof el==='string'?$(el):el).textContent=v}
 
-/* ─── League (by MAX coins, never decreases) ─── */
+/* ═══ COMBO SYSTEM ═══ */
+function getComboTier(clicks){
+    for(var i=COMBO_TIERS.length-1;i>=0;i--)if(clicks>=COMBO_TIERS[i].t)return i;return 0}
+
+function updateComboUI(){
+    var tier=getComboTier(comboClicks);
+    var newMult=COMBO_TIERS[tier].m;
+    var nextTier=tier<COMBO_TIERS.length-1?COMBO_TIERS[tier+1]:null;
+    var curThreshold=COMBO_TIERS[tier].t;
+    var nextThreshold=nextTier?nextTier.t:COMBO_TIERS[tier].t+1;
+
+    if(newMult!==comboMult){
+        var oldMult=comboMult;comboMult=newMult;
+        if(comboMult>oldMult){
+            playComboUp(comboMult);hap('heavy');
+            document.body.classList.remove('shake');void document.body.offsetWidth;document.body.classList.add('shake');
+            setTimeout(function(){document.body.classList.remove('shake')},350);
+        }
+    }
+
+    if(comboClicks>0&&comboMult>1){
+        comboSec.classList.remove('hidden');
+        st(comboLbl,'x'+comboMult);
+        var hue=120-((comboMult-1)/(COMBO_TIERS[COMBO_TIERS.length-1].m-1))*120;
+        comboLbl.style.color='hsl('+Math.max(0,hue)+',80%,60%)';
+
+        var progress=(comboClicks-curThreshold)/(nextThreshold-curThreshold)*100;
+        comboFill.style.width=Math.min(100,Math.max(0,progress))+'%';
+        comboFill.style.background=comboLbl.style.color;
+
+        st(comboSeries,'Серия: '+comboClicks+' кликов');
+    } else {
+        comboSec.classList.add('hidden');
+    }
+
+    /* Aura */
+    if(comboMult>1){
+        var color=COMBO_COLORS[Math.min(comboMult-1,COMBO_COLORS.length-1)];
+        auraEl.style.setProperty('--aura-color',color);
+        auraEl.style.setProperty('--aura-opacity',String(.15+comboMult*.04));
+        auraEl.classList.add('pulse');
+    } else {
+        auraEl.style.setProperty('--aura-opacity','0');
+        auraEl.classList.remove('pulse');
+    }
+
+    tapBtn.classList.toggle('combo-glow',comboMult>=3);
+
+    /* Achievements */
+    for(var a=0;a<ACH_THRESHOLDS.length;a++){
+        if(comboClicks>=ACH_THRESHOLDS[a]&&lastAchShown<ACH_THRESHOLDS[a]){
+            lastAchShown=ACH_THRESHOLDS[a];showAch(ACH_THRESHOLDS[a]);break}
+    }
+}
+
+function resetCombo(){
+    var tier=getComboTier(comboClicks);
+    comboClicks=COMBO_TIERS[tier].t;
+    comboTimer=null;
+    updateComboUI();
+}
+
+function showAch(n){
+    st(achText,'🔥 '+n+' комбо!');
+    achNotif.classList.add('active');
+    spawnConfetti();hap('ok');
+    if(achTimeout)clearTimeout(achTimeout);
+    achTimeout=setTimeout(function(){achNotif.classList.remove('active')},2500);
+}
+
+/* ═══ LEAGUE (by max coins, never decreases) ═══ */
 function getLgIdx(val){for(var i=LEAGUES.length-1;i>=0;i--)if(val>=LEAGUES[i].min)return i;return 0}
+
 function updateLeague(){
-    if(coins>maxCoins){maxCoins=coins;localStorage.setItem(K.MAXCOINS,String(maxCoins))}
+    if(coins>maxCoins){maxCoins=coins;localStorage.setItem(K.MAXC,String(maxCoins))}
     var idx=getLgIdx(maxCoins),lg=LEAGUES[idx];
+    /* Progress bar: based on CURRENT coins relative to current league range */
     var nextMin=idx<LEAGUES.length-1?LEAGUES[idx+1].min:lg.min+1;
-    var pct=Math.min(100,Math.max(0,((maxCoins-lg.min)/(nextMin-lg.min))*100));
+    var pct=0;
+    if(coins>=lg.min){pct=Math.min(100,Math.max(0,((coins-lg.min)/(nextMin-lg.min))*100))}
     st(lgLabel,lg.i+' '+lg.n);lgFill.style.width=pct+'%';
-    if(currentLeague>=0&&idx>currentLeague){
+
+    if(curLeague>=0&&idx>curLeague){
         showLgNotif(lg.i+' '+lg.n);spawnConfetti();
         lgFlash.classList.remove('fire');void lgFlash.offsetWidth;lgFlash.classList.add('fire');
         hap('ok');
     }
-    currentLeague=idx;
+    curLeague=idx;
 }
+
 function showLgNotif(name){st(lgNotifName,name);lgNotif.classList.add('active')}
 lgNotifClose.addEventListener('pointerdown',function(e){e.preventDefault();lgNotif.classList.remove('active');playClick();hap('tap')});
 
-/* ─── Confetti ─── */
+/* ═══ CONFETTI ═══ */
 function spawnConfetti(){
     var colors=['#a78bfa','#ec4899','#06b6d4','#10b981','#fbbf24','#3b82f6'];
-    for(var i=0;i<35;i++){
+    for(var i=0;i<30;i++){
         var c=document.createElement('div');c.className='confetti';
         c.style.left=Math.random()*100+'vw';
         c.style.background=colors[Math.floor(Math.random()*colors.length)];
-        c.style.animationDelay=(Math.random()*.6)+'s';
+        c.style.animationDelay=(Math.random()*.5)+'s';
         c.style.animationDuration=(1.2+Math.random()*.8)+'s';
-        c.style.width=(5+Math.random()*6)+'px';
-        c.style.height=(5+Math.random()*6)+'px';
+        c.style.width=(5+Math.random()*5)+'px';c.style.height=(5+Math.random()*5)+'px';
         document.body.appendChild(c);
         (function(el){setTimeout(function(){if(el.parentNode)el.parentNode.removeChild(el)},2500)})(c);
     }
 }
 
-/* ─── Particles on tap ─── */
+/* ═══ PARTICLES ═══ */
 function spawnParticles(x,y){
     for(var i=0;i<5;i++){
         var p=document.createElement('div');p.className='particle';
-        var a=Math.random()*Math.PI*2,d=30+Math.random()*40;
+        var a=Math.random()*Math.PI*2,d=25+Math.random()*35;
         p.style.left=x+'px';p.style.top=y+'px';
         p.style.setProperty('--dx',Math.cos(a)*d+'px');
         p.style.setProperty('--dy',Math.sin(a)*d+'px');
@@ -700,12 +779,13 @@ function spawnParticles(x,y){
     }
 }
 
-/* ─── Full UI ─── */
+/* ═══ FULL UI UPDATE ═══ */
 function updateUI(){
     st(coinsEl,fmt(coins));
     st(cpsEl,'+'+autoLvl+' / сек');
     st(statClicks,fmt(clicks));
     st(statPower,String(clickPower()));
+    st(shopCoins,'🪙 '+fmt(coins));
     st(autoLvlEl,'Ур. '+autoLvl);
     var ac=autoCost();st(autoBuyEl,'Купить — 🪙 '+fmt(ac));autoBuyEl.disabled=coins<ac;
     st(powerLvlEl,'Ур. '+powerLvl);
@@ -714,19 +794,20 @@ function updateUI(){
     st(profEarned,fmt(earned)+' 🪙');
     st(profTime,fmtTime(Date.now()-startTime));
     st(profIncome,String(autoLvl));
-    snd1Tog.classList.toggle('on',snd1On);
-    snd2Tog.classList.toggle('on',snd2On);
-    hapTog.classList.toggle('on',hapOn);
     vol1Sl.value=vol1;st(vol1Val,vol1+'%');
     vol2Sl.value=vol2;st(vol2Val,vol2+'%');
-    slidersSec.classList.toggle('hidden',!snd1On&&!snd2On);
+    vol3Sl.value=vol3;st(vol3Val,vol3+'%');
+    comboSndTog.classList.toggle('on',comboSndOn);
+    hapTog.classList.toggle('on',hapOn);
     updateLeague();
 }
 
-/* ─── Light UI (auto-income tick) ─── */
+/* ═══ LIGHT UI (auto-income tick) ═══ */
+var lastAutoPulse=0;
 function updateLight(){
     st(coinsEl,fmt(coins));
     st(cpsEl,'+'+autoLvl+' / сек');
+    st(shopCoins,'🪙 '+fmt(coins));
     st(profEarned,fmt(earned)+' 🪙');
     st(profTime,fmtTime(Date.now()-startTime));
     st(profIncome,String(autoLvl));
@@ -735,23 +816,17 @@ function updateLight(){
     updateLeague();
 }
 
-/* ─── Save ─── */
-function save(){
-    try{
-        localStorage.setItem(K.COINS,String(coins));
-        localStorage.setItem(K.CLICKS,String(clicks));
-        localStorage.setItem(K.EARNED,String(earned));
-        localStorage.setItem(K.AUTO,String(autoLvl));
-        localStorage.setItem(K.POWER,String(powerLvl));
-        localStorage.setItem(K.MAXCOINS,String(maxCoins));
-        localStorage.setItem(K.SND1,snd1On?'1':'0');
-        localStorage.setItem(K.SND2,snd2On?'1':'0');
-        localStorage.setItem(K.V1,String(vol1));
-        localStorage.setItem(K.V2,String(vol2));
-        localStorage.setItem(K.HAP,hapOn?'1':'0');
-    }catch(_){}}
+/* ═══ SAVE ═══ */
+function save(){try{
+    localStorage.setItem(K.COINS,String(coins));localStorage.setItem(K.CLICKS,String(clicks));
+    localStorage.setItem(K.EARNED,String(earned));localStorage.setItem(K.AUTO,String(autoLvl));
+    localStorage.setItem(K.POWER,String(powerLvl));localStorage.setItem(K.MAXC,String(maxCoins));
+    localStorage.setItem(K.V1,String(vol1));localStorage.setItem(K.V2,String(vol2));
+    localStorage.setItem(K.V3,String(vol3));localStorage.setItem(K.CSND,comboSndOn?'1':'0');
+    localStorage.setItem(K.HAP,hapOn?'1':'0');
+}catch(_){}}
 
-/* ─── Nav ─── */
+/* ═══ NAV ═══ */
 function go(id){
     for(var i=0;i<screens.length;i++)screens[i].classList.remove('active');
     $(id).classList.add('active');
@@ -760,7 +835,7 @@ function go(id){
 }
 for(var ni=0;ni<navBtns.length;ni++){(function(b){b.addEventListener('pointerdown',function(e){e.preventDefault();go(b.dataset.scr)})})(navBtns[ni])}
 
-/* ─── TAP (with debounce, combo, particles) ─── */
+/* ═══ TAP HANDLER ═══ */
 tapBtn.addEventListener('pointerdown',function(e){
     e.preventDefault();
     var now=Date.now();
@@ -768,40 +843,33 @@ tapBtn.addEventListener('pointerdown',function(e){
     lastTap=now;
 
     /* Combo */
-    combo=Math.min(combo+1,COMBO_MAX);
+    comboClicks++;
     if(comboTimer)clearTimeout(comboTimer);
-    comboTimer=setTimeout(function(){combo=0;comboEl.classList.add('hidden');tapBtn.classList.remove('combo-glow')},COMBO_TIMEOUT);
-    if(combo>1){
-        comboEl.classList.remove('hidden');
-        st(comboEl,'x'+combo+' COMBO');
-        var hue=60-combo*6;
-        comboEl.style.color='hsl('+Math.max(0,hue)+',90%,65%)';
-        tapBtn.classList.add('combo-glow');
-    }
+    comboTimer=setTimeout(resetCombo,COMBO_TIMEOUT);
+    updateComboUI();
 
-    var pw=clickPower()*combo;
+    var pw=clickPower()*comboMult;
     coins+=pw;clicks++;earned+=pw;
-    st(coinsEl,fmt(coins));st(statClicks,fmt(clicks));
+    st(coinsEl,fmt(coins));st(statClicks,fmt(clicks));st(shopCoins,'🪙 '+fmt(coins));
 
-    coinsEl.classList.remove('pop');void coinsEl.offsetWidth;coinsEl.classList.add('pop');
+    coinsEl.classList.remove('pop','auto-pulse');void coinsEl.offsetWidth;coinsEl.classList.add('pop');
     flashEl.classList.remove('fire');void flashEl.offsetWidth;flashEl.classList.add('fire');
 
-    /* Floating +N */
     var rect=tapBtn.getBoundingClientRect();
     var cx=(e.clientX||rect.left+rect.width/2)-rect.left;
     var cy=(e.clientY||rect.top+rect.height/2)-rect.top;
+
+    /* Floating +N */
     var fl=document.createElement('div');fl.className='float-num';
-    fl.textContent='+'+pw;
-    fl.style.left=(cx-15)+'px';fl.style.top=(cy-20)+'px';
+    fl.textContent='+'+pw;fl.style.left=(cx-15)+'px';fl.style.top=(cy-20)+'px';
     tapBtn.appendChild(fl);
     setTimeout(function(){if(fl.parentNode)fl.parentNode.removeChild(fl)},700);
 
-    /* Particles */
     spawnParticles(cx,cy);
 
     /* Ripple */
-    var rip=document.createElement('span');rip.className='ripple';
-    var sz=50;rip.style.width=sz+'px';rip.style.height=sz+'px';
+    var rip=document.createElement('span');rip.className='ripple';var sz=50;
+    rip.style.width=sz+'px';rip.style.height=sz+'px';
     rip.style.left=(cx-sz/2)+'px';rip.style.top=(cy-sz/2)+'px';
     tapBtn.appendChild(rip);
     setTimeout(function(){if(rip.parentNode)rip.parentNode.removeChild(rip)},400);
@@ -811,91 +879,87 @@ tapBtn.addEventListener('pointerdown',function(e){
     updateLeague();
 });
 
-/* ─── Upgrades ─── */
+/* ═══ UPGRADES ═══ */
 autoBuyEl.addEventListener('pointerdown',function(e){
     e.preventDefault();playClick();
-    var cost=autoCost();
-    if(coins<cost){hap('err');return}
-    coins-=cost;autoLvl++;save();updateUI();hap('heavy');
-});
+    var cost=autoCost();if(coins<cost){hap('err');return}
+    coins-=cost;autoLvl++;save();updateUI();hap('heavy')});
 powerBuyEl.addEventListener('pointerdown',function(e){
     e.preventDefault();playClick();
-    var cost=powerCost();
-    if(coins<cost){hap('err');return}
-    coins-=cost;powerLvl++;save();updateUI();hap('heavy');
-});
+    var cost=powerCost();if(coins<cost){hap('err');return}
+    coins-=cost;powerLvl++;save();updateUI();hap('heavy')});
 
-/* ─── Sound toggles ─── */
-function updateSliders(){
-    slidersSec.classList.toggle('hidden',!snd1On&&!snd2On);
-}
-snd1Tog.addEventListener('pointerdown',function(e){
-    e.preventDefault();snd1On=!snd1On;snd1Tog.classList.toggle('on',snd1On);
-    if(snd1On&&vol1===0){vol1=50;vol1Sl.value=50;st(vol1Val,'50%')}
-    localStorage.setItem(K.SND1,snd1On?'1':'0');
-    updateSliders();if(snd1On)playClick();hap('tap');
-});
-snd2Tog.addEventListener('pointerdown',function(e){
-    e.preventDefault();snd2On=!snd2On;snd2Tog.classList.toggle('on',snd2On);
-    if(snd2On&&vol2===0){vol2=50;vol2Sl.value=50;st(vol2Val,'50%')}
-    localStorage.setItem(K.SND2,snd2On?'1':'0');
-    updateSliders();hap('tap');
-});
-
-/* ─── Haptic toggle ─── */
-hapTog.addEventListener('pointerdown',function(e){
-    e.preventDefault();hapOn=!hapOn;hapTog.classList.toggle('on',hapOn);
-    localStorage.setItem(K.HAP,hapOn?'1':'0');
-    if(hapOn)hap('tap');
-});
-
-/* ─── Volume sliders ─── */
+/* ═══ SETTINGS: sliders ═══ */
 vol1Sl.addEventListener('input',function(){vol1=parseInt(vol1Sl.value);st(vol1Val,vol1+'%');localStorage.setItem(K.V1,String(vol1))});
 vol2Sl.addEventListener('input',function(){vol2=parseInt(vol2Sl.value);st(vol2Val,vol2+'%');localStorage.setItem(K.V2,String(vol2))});
+vol3Sl.addEventListener('input',function(){vol3=parseInt(vol3Sl.value);st(vol3Val,vol3+'%');localStorage.setItem(K.V3,String(vol3))});
+comboSndTog.addEventListener('pointerdown',function(e){
+    e.preventDefault();comboSndOn=!comboSndOn;comboSndTog.classList.toggle('on',comboSndOn);
+    localStorage.setItem(K.CSND,comboSndOn?'1':'0');playClick();hap('tap')});
+hapTog.addEventListener('pointerdown',function(e){
+    e.preventDefault();hapOn=!hapOn;hapTog.classList.toggle('on',hapOn);
+    localStorage.setItem(K.HAP,hapOn?'1':'0');if(hapOn)hap('tap')});
 
-/* ─── Reset ─── */
+/* ═══ RESET ═══ */
 resetBtn.addEventListener('pointerdown',function(e){
     e.preventDefault();playClick();hap('tap');
-    modal.classList.add('active');
-    var sec=5;mConfirm.disabled=true;st(mConfirm,'Продолжить ('+sec+')');
+    modal.classList.add('active');var sec=5;mConfirm.disabled=true;st(mConfirm,'Продолжить ('+sec+')');
     if(countdownId)clearInterval(countdownId);
-    countdownId=setInterval(function(){
-        sec--;
+    countdownId=setInterval(function(){sec--;
         if(sec<=0){clearInterval(countdownId);countdownId=null;mConfirm.disabled=false;st(mConfirm,'Продолжить')}
         else st(mConfirm,'Продолжить ('+sec+')');
-    },1000);
-});
-mCancel.addEventListener('pointerdown',function(e){
-    e.preventDefault();playClick();hap('tap');
-    modal.classList.remove('active');
-    if(countdownId){clearInterval(countdownId);countdownId=null}
-});
-$('modal-bg').addEventListener('pointerdown',function(e){
-    e.preventDefault();modal.classList.remove('active');
-    if(countdownId){clearInterval(countdownId);countdownId=null}
-});
+    },1000)});
+mCancel.addEventListener('pointerdown',function(e){e.preventDefault();playClick();hap('tap');
+    modal.classList.remove('active');if(countdownId){clearInterval(countdownId);countdownId=null}});
+$('modal-bg').addEventListener('pointerdown',function(e){e.preventDefault();
+    modal.classList.remove('active');if(countdownId){clearInterval(countdownId);countdownId=null}});
 mConfirm.addEventListener('pointerdown',function(e){
-    e.preventDefault();if(mConfirm.disabled)return;
-    playClick();hap('heavy');
-    coins=0;clicks=0;earned=0;autoLvl=0;powerLvl=0;maxCoins=0;combo=0;currentLeague=-1;
+    e.preventDefault();if(mConfirm.disabled)return;playClick();hap('heavy');
+    coins=0;clicks=0;earned=0;autoLvl=0;powerLvl=0;maxCoins=0;
+    comboClicks=0;comboMult=1;curLeague=-1;lastAchShown=0;
     for(var k in K)try{localStorage.removeItem(K[k])}catch(_){}
     startTime=Date.now();localStorage.setItem(K.START,String(startTime));
-    save();updateUI();modal.classList.remove('active');
-});
+    save();updateUI();updateComboUI();modal.classList.remove('active')});
 
-/* ─── Auto-income (100ms tick) ─── */
+/* ═══ TIER LIST ═══ */
+function buildTierList(){
+    tierList.innerHTML='';
+    var curIdx=getLgIdx(maxCoins);
+    for(var i=LEAGUES.length-1;i>=0;i--){
+        var lg=LEAGUES[i];
+        var row=document.createElement('div');
+        row.className='tier-row'+(i===curIdx?' current':'');
+        row.innerHTML='<div><span class="tier-row__name">'+lg.i+' '+lg.n+'</span>'
+            +(i===curIdx?'<span class="tier-row__marker">← вы здесь</span>':'')+'</div>'
+            +'<div class="tier-row__threshold">'+(lg.min>0?fmt(lg.min)+' 🪙':'Старт')+'</div>';
+        tierList.appendChild(row);
+    }
+}
+tierBtn.addEventListener('pointerdown',function(e){e.preventDefault();playClick();hap('tap');buildTierList();tierModal.classList.add('active')});
+tierClose.addEventListener('pointerdown',function(e){e.preventDefault();playClick();hap('tap');tierModal.classList.remove('active')});
+$('tier-modal-bg').addEventListener('pointerdown',function(e){e.preventDefault();tierModal.classList.remove('active')});
+
+/* ═══ AUTO-INCOME (100ms tick) ═══ */
 setInterval(function(){
-    if(autoLvl>0){var add=autoLvl/10;coins+=add;earned+=add;updateLight()}
+    if(autoLvl>0){
+        var add=autoLvl/10;coins+=add;earned+=add;updateLight();
+        var now=Date.now();
+        if(now-lastAutoPulse>1000){
+            lastAutoPulse=now;
+            coinsEl.classList.remove('pop','auto-pulse');void coinsEl.offsetWidth;coinsEl.classList.add('auto-pulse');
+        }
+    }
     st(profTime,fmtTime(Date.now()-startTime));
 },100);
 
-/* ─── Save on close ─── */
+/* ═══ SAVE ON CLOSE ═══ */
 window.addEventListener('beforeunload',save);
 window.addEventListener('pagehide',save);
 
-/* ─── Init ─── */
-currentLeague=getLgIdx(maxCoins);
+/* ═══ INIT ═══ */
+curLeague=getLgIdx(maxCoins);
 updateUI();
+updateComboUI();
 
 })();
 </script>
